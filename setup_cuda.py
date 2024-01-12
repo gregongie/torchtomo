@@ -5,7 +5,7 @@ setup(
     name='torchtomo_cuda',
     ext_modules=[
         CUDAExtension('torchtomo_cuda', [
-            'torchtomo.cpp',
+            'torchtomo_cuda.cpp',
             'torchtomo_kernel.cu',
         ])
     ],

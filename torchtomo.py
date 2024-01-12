@@ -3,20 +3,20 @@ import numpy as np
 import torchtomo_cuda
 
 class CircularFanbeam:
-"""
-Defines 2D circular fanbeam projection and backprojection operators,
-plus filtered back projection with a ramp filter, and its adjoint.
-P : Circular Fanbeam Projection operator
-Pt : Associted Backprojection operator (exact adjoint of P)
-WPt : Spatially weighted backprojection (as needed for FBP)
-WP : Exact adjoint of spatially weighted backprojection
-fbp : Filtered back projection
-fbp_adj : Exact adjoint of FBP
+    """
+    Defines 2D circular fanbeam projection and backprojection operators,
+    plus filtered back projection with a ramp filter, and its adjoint.
+    P : Circular Fanbeam Projection operator
+    Pt : Associted Backprojection operator (exact adjoint of P)
+    WPt : Spatially weighted backprojection (as needed for FBP)
+    WP : Exact adjoint of spatially weighted backprojection
+    fbp : Filtered back projection
+    fbp_adj : Exact adjoint of FBP
 
-Inputs are
-geom : dictionary containing scan geometry parameters
-device : torch GPU device, typically torch.device("cuda:0")
-"""
+    Inputs are
+    geom : dictionary containing scan geometry parameters
+    device : torch GPU device, typically torch.device("cuda:0")
+    """
     def __init__(self, geom, device):
         self.nx = geom['nx'] #pixel res in hor. direction
         self.ny = geom['ny'] #pixel res in vert. direction
@@ -105,9 +105,9 @@ def ramp_kernel(n,du):
   return rfilter/2.
 
 def diffP(TObj):
-"""
-Wrapper to define autograd compatible projector operator in torch
-"""
+    """
+    Wrapper to define autograd compatible projector operator in torch
+    """
     class Projection(torch.autograd.Function):
         @staticmethod
         def forward(ctx, x):
@@ -122,9 +122,9 @@ Wrapper to define autograd compatible projector operator in torch
     return Projection.apply
 
 def diffFBP(ttObj):
-"""
-Wrapper to define autograd compatible FBP operator in torch
-"""
+    """
+    Wrapper to define autograd compatible FBP operator in torch
+    """
     class FBP(torch.autograd.Function):
         @staticmethod
         def forward(ctx, x):

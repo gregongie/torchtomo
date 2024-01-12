@@ -79,8 +79,8 @@ class CircularFanbeam:
         sino = self.WP(img)
         [nbatch,nviews,nbins] = sino.shape
         sinoflat = sino.view(nbatch*nviews,1,-1) #flatten sinogram to perform parallel 1-D convolution
-        filteredweightedsino = torch.nn.functional.conv1d(sinoflat*self.data_weight,self.rfilter,padding='same').view(nbatch,nviews,nbins)
-        return filteredweightedsino
+        filteredweightedsino = torch.nn.functional.conv1d(sinoflat,self.rfilter,padding='same').view(nbatch,nviews,nbins)
+        return filteredweightedsino*self.data_weight
 
 # Ramp filter from Kak and Slaney "Principles of Computerized Tomographic Imaging" needed for FBP
 def ramp_kernel(n,du):

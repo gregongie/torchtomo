@@ -427,7 +427,6 @@ __global__ void backprojection_wpd_kernel(torch::PackedTensorAccessor32<float,3,
 }
 
 torch::Tensor circularFanbeamProjection_cuda(const torch::Tensor image, const int nx, const int ny,
-                              const float x0, const float y0,
                               const float xlen, const float ylen,
                               const float ximageside, const float yimageside,
                               const float radius, const float source_to_detector,

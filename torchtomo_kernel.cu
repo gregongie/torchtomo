@@ -426,16 +426,18 @@ __global__ void backprojection_wpd_kernel(torch::PackedTensorAccessor32<float,3,
    }
 }
 
-torch::Tensor circularFanbeamProjection_cuda(const torch::Tensor image, const int nx, const int ny, const float ximageside, const float yimageside,
+torch::Tensor circularFanbeamProjection_cuda(const torch::Tensor image, const int nx, const int ny,
+                              const float x0, const float y0,
+                              const float ximageside, const float yimageside,
                               const float radius, const float source_to_detector,
-                              const int nviews, const float slen, const int nbins) {
+                              const int nviews, const float slen, const int nbins, const float fanangle2) {
     const float dx = ximageside/nx;
     const float dy = yimageside/ny;
     const float x0 = -ximageside/2.0;
     const float y0 = -yimageside/2.0;
 
     // compute length of detector so that it views the inscribed FOV of the image array
-    const float fanangle2 = std::asin((ximageside/2.0)/radius);  //This only works for ximageside = yimageside
+    // const float fanangle2 = std::asin((ximageside/2.0)/radius);  //This only works for ximageside = yimageside
     const float detectorlength = 2.0*std::tan(fanangle2)*source_to_detector;
     const float u0 = -detectorlength/2.0;
 

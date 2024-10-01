@@ -62,7 +62,10 @@ class CircularFanbeam:
         return torchtomo_cuda.circularFanbeamProjection(self.mask*img, self.nx, self.ny, self.xlen, self.ylen, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
 
     def Pt(self,sino):
-        return self.mask*torchtomo_cuda.circularFanbeamBackProjection(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
+        return self.mask*torchtomo_cuda.circularFanbeamBackProjection_kbn(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
+    
+    # def Pt(self,sino):
+    #     return self.mask*torchtomo_cuda.circularFanbeamBackProjection(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
 
     def WP(self,img):
         return torchtomo_cuda.circularFanbeamWPDProjection(self.mask*img, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)

@@ -30,6 +30,11 @@ class CircularFanbeam:
         self.nviews = geom['nviews'] #num projection views
         self.nbins = geom['nbins']   #num detector bins per view
 
+        if "fbp_filter" in geom:
+            self.fbp_filter = geom['fbp_filter']
+        else: #default to ram-lak (i.e., pure ramp filter)
+            self.fbp_filter = "ram-lak"
+
         self.device = device
 
         #define circular FOV mask
@@ -49,12 +54,17 @@ class CircularFanbeam:
         self.mask = torch.from_numpy(mask).to(self.device)
 
         #define ramp filter and data weighting needed for FBP
-        rfilter = ramp_kernel(2*self.nbins-1,dup)*dup
+        if self.fbp_filter == "ram-lak":
+            rfilter = ramp_kernel(2*self.nbins-1,dup)*dup
+        elif self.fbp_filter == "shepp-logan":
+            rfilter = shepplogan_kernel(2*self.nbins-1,dup)*dup
+        else: #default to ramp
+            rfilter = ramp_kernel(2*self.nbins-1,dup)*dup
+        
         u0 = -detectorlength/2.
         uarray = np.arange(u0 + du/2., u0+ du/2. + detectorlength, du)
         uarray *= self.radius/self.source_to_detector
         data_weight = self.radius/np.sqrt(self.radius**2 + uarray**2)
-
         self.rfilter = torch.from_numpy(np.float32(rfilter)).view(1,1,-1).to(self.device)
         self.data_weight = torch.from_numpy(np.float32(data_weight)).to(self.device)
 
@@ -108,6 +118,22 @@ def ramp_kernel(n,du):
       rfilter[int((n-1)/2)] = 1./(4.*du*du)
 
   return rfilter/2.
+
+#Shepp-logan filter
+def shepplogan_kernel(n,du):
+    it_is_even = 0
+    if np.mod(n,2)==0:
+        it_is_even = 1
+
+    if it_is_even:
+        nr = np.arange(-n/2., n/2., 1.)
+
+    else:
+        nr = np.arange(-(n-1)/2., (n-1)/2. + 1., 1.)
+
+    filter = -2./(((np.pi*du)**2)*(4.*nr**2-1))
+
+    return filter
 
 def diffP(TObj):
     """

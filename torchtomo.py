@@ -133,7 +133,7 @@ def shepplogan_kernel(n,du):
 
     filter = -2./(((np.pi*du)**2)*(4.*nr**2-1))
 
-    return filter
+    return filter/2.
 
 def diffP(TObj):
     """

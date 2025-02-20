@@ -3,26 +3,31 @@
 torch::Tensor circularFanbeamProjection_cuda(const torch::Tensor image, const int nx, const int ny,
                               const float xlen, const float ylen,
                               const float ximageside, const float yimageside,
+                              const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins);
 
 torch::Tensor circularFanbeamBackProjection_cuda(const torch::Tensor sinogram, const int nx, const int ny,
                               const float ximageside, const float yimageside,
+                              const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins);
 
 torch::Tensor circularFanbeamBackProjection_cuda_kbn(const torch::Tensor sinogram, const int nx, const int ny,
                               const float ximageside, const float yimageside,
+                              const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins);
 
 torch::Tensor circularFanbeamWPDProjection_cuda(const torch::Tensor sinogram, const int nx, const int ny,
                               const float ximageside, const float yimageside,
+                              const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins);
 
 torch::Tensor circularFanbeamWPDBackProjection_cuda(const torch::Tensor sinogram, const int nx, const int ny,
                               const float ximageside, const float yimageside,
+                              const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins);
 
@@ -35,45 +40,46 @@ torch::Tensor circularFanbeamWPDBackProjection_cuda(const torch::Tensor sinogram
 torch::Tensor circularFanbeamProjection(const torch::Tensor image, const int nx, const int ny,
                               const float xlen, const float ylen,
                               const float ximageside, const float yimageside,
+                              const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins) {
   CHECK_INPUT(image);
 
-  return circularFanbeamProjection_cuda(image, nx, ny, xlen, ylen, ximageside, yimageside,
+  return circularFanbeamProjection_cuda(image, nx, ny, xlen, ylen, ximageside, yimageside, x0, y0,
     radius, source_to_detector, nviews, slen, nbins);
 }
 
-torch::Tensor circularFanbeamBackProjection(const torch::Tensor sinogram, const int nx, const int ny, const float ximageside, const float yimageside,
+torch::Tensor circularFanbeamBackProjection(const torch::Tensor sinogram, const int nx, const int ny, const float ximageside, const float yimageside, const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins) {
   CHECK_INPUT(sinogram);
 
-  return circularFanbeamBackProjection_cuda(sinogram, nx, ny, ximageside, yimageside,
+  return circularFanbeamBackProjection_cuda(sinogram, nx, ny, ximageside, yimageside, x0, y0, 
     radius, source_to_detector, nviews, slen, nbins);
 }
 
-torch::Tensor circularFanbeamBackProjection_kbn(const torch::Tensor sinogram, const int nx, const int ny, const float ximageside, const float yimageside,
+torch::Tensor circularFanbeamBackProjection_kbn(const torch::Tensor sinogram, const int nx, const int ny, const float ximageside, const float yimageside, const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins) {
   CHECK_INPUT(sinogram);
 
-  return circularFanbeamBackProjection_cuda_kbn(sinogram, nx, ny, ximageside, yimageside,
+  return circularFanbeamBackProjection_cuda_kbn(sinogram, nx, ny, ximageside, yimageside, x0, y0,
     radius, source_to_detector, nviews, slen, nbins);
 }
 
-torch::Tensor circularFanbeamWPDProjection(const torch::Tensor image, const int nx, const int ny, const float ximageside, const float yimageside,
+torch::Tensor circularFanbeamWPDProjection(const torch::Tensor image, const int nx, const int ny, const float ximageside, const float yimageside, const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins) {
   CHECK_INPUT(image);
-  return circularFanbeamWPDProjection_cuda(image, nx, ny, ximageside, yimageside,
+  return circularFanbeamWPDProjection_cuda(image, nx, ny, ximageside, yimageside, x0, y0,
     radius, source_to_detector, nviews, slen, nbins);
 }
 
-torch::Tensor circularFanbeamWPDBackProjection(const torch::Tensor sinogram, const int nx, const int ny, const float ximageside, const float yimageside,
+torch::Tensor circularFanbeamWPDBackProjection(const torch::Tensor sinogram, const int nx, const int ny, const float ximageside, const float yimageside, const float x0, const float y0,
                               const float radius, const float source_to_detector,
                               const int nviews, const float slen, const int nbins) {
   CHECK_INPUT(sinogram);
-  return circularFanbeamWPDBackProjection_cuda(sinogram, nx, ny, ximageside, yimageside,
+  return circularFanbeamWPDBackProjection_cuda(sinogram, nx, ny, ximageside, yimageside, x0, y0,
     radius, source_to_detector, nviews, slen, nbins);
 }
 

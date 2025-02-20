@@ -14,7 +14,7 @@ class CircularFanbeam:
     fbp_adj : Exact adjoint of FBP
 
     Inputs are
-    geom : dictionary containing scan geometry parameters
+    geom : dictionary containing scan geometry parameters (defined below)
     device : torch GPU device, typically torch.device("cuda:0")
     """
     def __init__(self, geom, device):
@@ -35,6 +35,18 @@ class CircularFanbeam:
         else: #default to ram-lak (i.e., pure ramp filter)
             self.fbp_filter = "ram-lak"
 
+        #for backward compatibility -- check for x0 and y0 values in geom dict
+        #otherwise replace with defaults 
+        if "x0" in geom:
+            self.x0 = geom['x0']
+        else: 
+            self.x0 = -self.ximageside/2.0
+
+        if "y0" in geom:
+            self.y0 = geom['y0']
+        else: 
+            self.y0 = -self.yimageside/2.0
+
         self.device = device
 
         #define circular FOV mask
@@ -42,7 +54,7 @@ class CircularFanbeam:
         detectorlength = 2.*np.tan(fanangle2)*self.source_to_detector
         u0 = -detectorlength/2.
         du = detectorlength/self.nbins
-        ds = self.slen/self.nviews
+        # ds = self.slen/self.nviews #not used
         dup = du*self.radius/self.source_to_detector  #detector bin spacing at iso-center
         dx = self.ximageside/self.nx
         dy = self.yimageside/self.ny
@@ -69,19 +81,19 @@ class CircularFanbeam:
         self.data_weight = torch.from_numpy(np.float32(data_weight)).to(self.device)
 
     def P(self,img):
-        return torchtomo_cuda.circularFanbeamProjection(self.mask*img, self.nx, self.ny, self.xlen, self.ylen, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
+        return torchtomo_cuda.circularFanbeamProjection(self.mask*img, self.nx, self.ny, self.xlen, self.ylen, self.ximageside, self.yimageside, self.x0, self.y0, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
 
     def Pt(self,sino):
-        return self.mask*torchtomo_cuda.circularFanbeamBackProjection_kbn(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
+        return self.mask*torchtomo_cuda.circularFanbeamBackProjection_kbn(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.x0, self.y0, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
     
     # def Pt(self,sino):
     #     return self.mask*torchtomo_cuda.circularFanbeamBackProjection(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
 
     def WP(self,img):
-        return torchtomo_cuda.circularFanbeamWPDProjection(self.mask*img, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
+        return torchtomo_cuda.circularFanbeamWPDProjection(self.mask*img, self.nx, self.ny, self.ximageside, self.yimageside, self.x0, self.y0, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
 
     def WPt(self,sino):
-        return self.mask*torchtomo_cuda.circularFanbeamWPDBackProjection(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
+        return self.mask*torchtomo_cuda.circularFanbeamWPDBackProjection(sino, self.nx, self.ny, self.ximageside, self.yimageside, self.x0, self.y0, self.radius, self.source_to_detector, self.nviews, self.slen, self.nbins)
 
     # Applies the filter to weighted sinogram needed for fanbeam FBP
     def fbp(self,sino):

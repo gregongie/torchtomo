@@ -2,6 +2,8 @@ import torch
 import numpy as np
 import torchtomo_cuda
 
+torch.backends.cudnn.allow_tf32 = False #essential to add this, otherwise FBP on GPU gives errors (result of conv1d differs)
+
 class CircularFanbeam:
     """
     Defines 2D circular fanbeam projection and backprojection operators,
